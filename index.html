@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2B2024">
+<title>Boticário · Ludmilla</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --tinta: #2B2024;
+    --rose: #B76E79;
+    --rose-2: #C9957A;
+    --rose-claro: #E8C4C4;
+    --champagne: #C9A86A;
+    --creme: #FBF8F5;
+    --cartao: #FFFFFF;
+    --linha: #EDE6E2;
+    --cinza: #9A8E8E;
+    --cinza-2: #6B5E5E;
+    --verde: #4E8F6D;
+    --verde-bg: #EDF5F0;
+    --vinho: #B5485B;
+    --vinho-bg: #FBEEF0;
+    --ambar: #C98A3A;
+    --ambar-bg: #FBF2E6;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--creme); color: var(--tinta); min-height: 100vh; padding: 0 0 92px; }
+  header { background: var(--tinta); color: #fff; padding: 20px 20px 22px; }
+  .marca { display: flex; align-items: center; justify-content: space-between; }
+  .marca .nome { font-family: Georgia, serif; font-size: 15px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .marca .nome b { color: var(--champagne); font-weight: 600; }
+  .sync { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #B8AEAE; }
+  .sync .dot { width: 7px; height: 7px; border-radius: 50%; background: #66756C; }
+  .sync.on .dot { background: #7FD7A8; }
+  .resumo-topo { display: flex; gap: 10px; margin-top: 18px; }
+  .rt { flex: 1; background: rgba(255,255,255,0.07); border-radius: 12px; padding: 11px 12px; }
+  .rt .l { font-size: 10px; color: #B8AEAE; letter-spacing: 0.5px; text-transform: uppercase; }
+  .rt .v { font-size: 15px; font-weight: 700; font-family: Georgia, serif; margin-top: 3px; }
+  .rt .v.ouro { color: var(--champagne); }
+  .rt .v.verde { color: #7FD7A8; }
+  .rt .v.rosa { color: #E69AAB; }
+
+  .container { max-width: 560px; margin: 0 auto; padding: 0 16px; }
+
+  .abas { display: flex; gap: 6px; margin-top: 16px; background: var(--cartao); border: 1px solid var(--linha); border-radius: 13px; padding: 5px; position: sticky; top: 8px; z-index: 20; box-shadow: 0 2px 10px rgba(43,32,36,0.05); }
+  .abas button { flex: 1; padding: 10px 3px; border: none; background: none; border-radius: 9px; font-size: 11px; font-weight: 600; color: var(--cinza); cursor: pointer; }
+  .abas button.ativa { background: var(--tinta); color: #fff; }
+
+  .secao { margin-top: 18px; }
+  .secao-titulo { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 4px 12px; }
+  .secao-titulo .t { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--cinza-2); font-weight: 600; }
+  .secao-titulo .x { font-size: 11px; color: var(--cinza); }
+
+  .card { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 15px; margin-bottom: 9px; box-shadow: 0 2px 8px rgba(43,32,36,0.04); }
+
+  /* Produto no estoque */
+  .prod { display: flex; align-items: center; gap: 12px; }
+  .prod .qtd-badge { flex: 0 0 auto; min-width: 44px; height: 44px; border-radius: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--verde-bg); }
+  .prod .qtd-badge .n { font-size: 17px; font-weight: 700; color: var(--verde); line-height: 1; }
+  .prod .qtd-badge .u { font-size: 8px; color: var(--verde); text-transform: uppercase; letter-spacing: 0.5px; }
+  .prod .qtd-badge.baixo { background: var(--ambar-bg); }
+  .prod .qtd-badge.baixo .n, .prod .qtd-badge.baixo .u { color: var(--ambar); }
+  .prod .qtd-badge.zero { background: var(--vinho-bg); }
+  .prod .qtd-badge.zero .n, .prod .qtd-badge.zero .u { color: var(--vinho); }
+  .prod .info { flex: 1; min-width: 0; }
+  .prod .nome { font-size: 15px; font-weight: 600; }
+  .prod .precos { font-size: 12px; color: var(--cinza); margin-top: 3px; }
+  .prod .lucro { font-size: 11.5px; color: var(--verde); font-weight: 600; margin-top: 2px; }
+  .prod .acoes { display: flex; flex-direction: column; gap: 2px; }
+  .prod .acoes button { background: none; border: none; cursor: pointer; padding: 4px 6px; color: var(--cinza); font-size: 14px; }
+  .prod .area-venda { flex: 1; display: flex; align-items: center; gap: 12px; cursor: pointer; border-radius: 10px; padding: 2px; margin: -2px; transition: background 0.15s; min-width: 0; }
+  .prod .area-venda:active { background: var(--rose-claro); opacity: 0.7; }
+  .prod .seta { flex: 0 0 auto; color: var(--rose); font-size: 22px; font-weight: 300; padding-left: 2px; }
+  .dica-venda { background: var(--vinho-bg); color: var(--rose); font-size: 12px; text-align: center; padding: 9px; border-radius: 10px; margin-bottom: 11px; font-weight: 600; }
+
+  .venda-item, .deve-item, .enc-item { display: flex; align-items: center; gap: 12px; }
+  .venda-item .info, .deve-item .info, .enc-item .info { flex: 1; min-width: 0; }
+  .venda-item .nome, .deve-item .nome, .enc-item .nome { font-size: 14.5px; font-weight: 600; }
+  .venda-item .meta, .deve-item .meta, .enc-item .meta { font-size: 11.5px; color: var(--cinza); margin-top: 3px; }
+  .venda-item .valor { font-size: 15px; font-weight: 700; font-family: Georgia, serif; color: var(--verde); white-space: nowrap; }
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tag.pago { background: var(--verde-bg); color: var(--verde); }
+  .tag.fiado { background: var(--vinho-bg); color: var(--vinho); }
+  .deve-item .valor { font-size: 15px; font-weight: 700; font-family: Georgia, serif; color: var(--vinho); white-space: nowrap; }
+  .btn-receber { background: var(--verde); color: #fff; border: none; padding: 7px 12px; border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .enc-item .check { flex: 0 0 24px; height: 24px; border-radius: 50%; border: 2.5px solid var(--rose-claro); cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; }
+  .enc-item.feito .check { background: var(--verde); border-color: var(--verde); }
+  .enc-item.feito .nome { text-decoration: line-through; color: var(--cinza); }
+  .enc-item .acoes button { background: none; border: none; cursor: pointer; padding: 4px 6px; color: var(--cinza); font-size: 14px; }
+
+  .vazio { text-align: center; color: var(--cinza); padding: 40px 20px; font-size: 13.5px; line-height: 1.6; }
+  .painel-acerto { background: var(--cartao); border: 1px solid var(--linha); border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(43,32,36,0.05); margin-top: 4px; }
+  .painel-acerto h3 { font-family: Georgia, serif; font-size: 16px; margin-bottom: 14px; text-align: center; }
+  .pa-linha { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--linha); font-size: 14px; }
+  .pa-linha:last-of-type { border-bottom: none; }
+  .pa-linha .lab { color: var(--cinza-2); }
+  .pa-linha .val { font-weight: 700; font-family: Georgia, serif; }
+  .pa-linha.destaque .val { color: var(--vinho); font-size: 17px; }
+  .pa-linha.lucro .val { color: var(--verde); }
+  .btn-fechar-acerto { width: 100%; margin-top: 16px; padding: 14px; background: var(--tinta); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-fechar-acerto:disabled { opacity: 0.4; }
+  .acerto-hist { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 15px; margin-bottom: 9px; }
+  .acerto-hist .cab { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .acerto-hist .data { font-size: 14px; font-weight: 700; }
+  .acerto-hist .pago-forn { font-size: 13px; color: var(--vinho); font-weight: 700; font-family: Georgia, serif; }
+  .acerto-hist .mini { font-size: 12px; color: var(--cinza); }
+  .acerto-hist .ver { font-size: 12px; color: var(--rose); cursor: pointer; margin-top: 8px; display: inline-block; }
+  .acerto-detalhe { margin-top: 10px; border-top: 1px solid var(--linha); padding-top: 10px; display: none; }
+  .acerto-detalhe.show { display: block; }
+  .acerto-detalhe .dv { font-size: 12.5px; color: var(--cinza-2); padding: 4px 0; display: flex; justify-content: space-between; }
+  .vazio .ic { font-size: 32px; opacity: 0.4; display: block; margin-bottom: 10px; }
+
+  .fab { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--tinta); color: #fff; border: none; padding: 15px 26px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(43,32,36,0.28); z-index: 50; display: flex; align-items: center; gap: 8px; }
+  .fab .plus { color: var(--champagne); font-size: 19px; }
+  .fab:active { transform: translateX(-50%) scale(0.97); }
+
+  .modal-bg { position: fixed; inset: 0; background: rgba(43,32,36,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+  .modal-bg.aberto { display: flex; }
+  .modal { background: var(--creme); width: 100%; max-width: 560px; border-radius: 22px 22px 0 0; padding: 8px 20px 28px; max-height: 94vh; overflow-y: auto; animation: sobe 0.28s cubic-bezier(0.2,0.8,0.2,1); }
+  @keyframes sobe { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .puxador { width: 38px; height: 4px; background: var(--linha); border-radius: 4px; margin: 8px auto 16px; }
+  .modal h2 { font-family: Georgia, serif; font-size: 19px; text-align: center; margin-bottom: 18px; font-weight: 600; }
+  .campo { margin-bottom: 14px; }
+  .campo label { display: block; font-size: 11.5px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--cinza-2); font-weight: 600; margin-bottom: 7px; }
+  .campo input, .campo select { width: 100%; padding: 13px; border: 1px solid var(--linha); border-radius: 11px; font-size: 16px; color: var(--tinta); outline: none; background: var(--cartao); font-family: inherit; }
+  .campo input:focus, .campo select:focus { border-color: var(--rose); }
+  .dois { display: flex; gap: 10px; }
+  .dois .campo { flex: 1; }
+  .previa-lucro { background: var(--verde-bg); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; color: var(--verde); font-weight: 600; margin-bottom: 14px; text-align: center; display: none; }
+  .previa-lucro.show { display: block; }
+  .pag-toggle { display: flex; gap: 10px; }
+  .pag-toggle button { flex: 1; padding: 12px; border-radius: 11px; border: 1.5px solid var(--linha); background: var(--cartao); font-size: 14px; font-weight: 600; cursor: pointer; color: var(--cinza-2); }
+  .pag-toggle button.sel-pago { background: var(--verde); color: #fff; border-color: var(--verde); }
+  .pag-toggle button.sel-fiado { background: var(--vinho); color: #fff; border-color: var(--vinho); }
+  .modal-botoes { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-botoes button { flex: 1; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-cancelar { background: var(--cartao); border: 1px solid var(--linha) !important; color: var(--cinza-2); }
+  .btn-salvar { background: var(--tinta); color: #fff; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <div class="nome">Boticário <b>by Ludmilla</b></div>
+      <div class="sync" id="sync"><span class="dot"></span><span id="sync-txt">···</span></div>
+    </div>
+    <div class="resumo-topo">
+      <div class="rt"><div class="l">Estoque</div><div class="v ouro" id="rtEstoque">CHF 0</div></div>
+      <div class="rt"><div class="l">Lucro previsto</div><div class="v verde" id="rtLucro">CHF 0</div></div>
+      <div class="rt"><div class="l">A receber</div><div class="v rosa" id="rtReceber">CHF 0</div></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="abas">
+      <button class="ativa" data-aba="estoque" onclick="setAba('estoque')">📦 Estoque</button>
+      <button data-aba="vendas" onclick="setAba('vendas')">💰 Vendas</button>
+      <button data-aba="receber" onclick="setAba('receber')">📋 A receber</button>
+      <button data-aba="encomendas" onclick="setAba('encomendas')">🛍️ Encomendas</button>
+      <button data-aba="acertos" onclick="setAba('acertos')">🤝 Acertos</button>
+    </div>
+
+    <div class="secao" id="secEstoque">
+      <div class="secao-titulo"><span class="t">Meus produtos</span><span class="x" id="contProdutos"></span></div>
+      <div class="dica-venda" id="dicaVenda">👆 Toque no produto para registrar uma venda</div>
+      <div id="listaEstoque"></div>
+    </div>
+
+    <div class="secao" id="secVendas" style="display:none;">
+      <div class="secao-titulo"><span class="t">Vendas</span><span class="x" id="contVendas"></span></div>
+      <div id="listaVendas"></div>
+    </div>
+
+    <div class="secao" id="secReceber" style="display:none;">
+      <div class="secao-titulo"><span class="t">Quem me deve</span><span class="x" id="contReceber"></span></div>
+      <div id="listaReceber"></div>
+    </div>
+
+    <div class="secao" id="secEncomendas" style="display:none;">
+      <div class="secao-titulo"><span class="t">Encomendas</span><span class="x" id="contEncomendas"></span></div>
+      <div id="listaEncomendas"></div>
+    </div>
+
+    <div class="secao" id="secAcertos" style="display:none;">
+      <div class="painel-acerto" id="painelAcertoAtual"></div>
+      <div class="secao-titulo" style="margin-top:22px;"><span class="t">Histórico de acertos</span></div>
+      <div id="listaAcertos"></div>
+    </div>
+  </div>
+
+  <button class="fab" id="fab" onclick="abrirModal()"><span class="plus">+</span> <span id="fabTxt">Novo produto</span></button>
+
+  <!-- Modal Produto -->
+  <div class="modal-bg" id="modalProduto">
+    <div class="modal">
+      <div class="puxador"></div>
+      <h2 id="tituloProduto">Novo produto</h2>
+      <div class="campo"><label>Nome do produto</label><input type="text" id="pNome" placeholder="Ex: Perfume Malbec 100ml"></div>
+      <div class="campo"><label>Categoria</label><input type="text" id="pCategoria" placeholder="Ex: Nativa SPA, Perfume, Kit..." list="listaCategorias"><datalist id="listaCategorias"></datalist></div>
+      <div class="dois">
+        <div class="campo"><label>Quantidade</label><input type="number" id="pQtd" inputmode="numeric" placeholder="0"></div>
+        <div class="campo"><label>Estoque mínimo</label><input type="number" id="pMin" inputmode="numeric" placeholder="2"></div>
+      </div>
+      <div class="dois">
+        <div class="campo"><label>Custo (paguei)</label><input type="number" id="pCusto" inputmode="decimal" placeholder="0.00" step="0.05" oninput="previaLucro()"></div>
+        <div class="campo"><label>Venda (vendo por)</label><input type="number" id="pVenda" inputmode="decimal" placeholder="0.00" step="0.05" oninput="previaLucro()"></div>
+      </div>
+      <div class="previa-lucro" id="previaLucro"></div>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+        <button class="btn-salvar" onclick="salvarProduto()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Venda -->
+  <div class="modal-bg" id="modalVenda">
+    <div class="modal">
+      <div class="puxador"></div>
+      <h2>Nova venda</h2>
+      <div class="campo"><label>Produto</label><select id="vProduto" onchange="atualizaPrecoVenda()"></select></div>
+      <div class="dois">
+        <div class="campo"><label>Quantidade</label><input type="number" id="vQtd" inputmode="numeric" value="1" oninput="atualizaPrecoVenda()"></div>
+        <div class="campo"><label>Valor total (CHF)</label><input type="number" id="vValor" inputmode="decimal" placeholder="0.00" step="0.05"></div>
+      </div>
+      <div class="campo"><label>Cliente</label><input type="text" id="vCliente" placeholder="Nome da cliente"></div>
+      <div class="campo">
+        <label>Pagamento</label>
+        <div class="pag-toggle">
+          <button type="button" id="btnPago" onclick="setPagVenda('pago')">✓ Pago</button>
+          <button type="button" id="btnFiado" onclick="setPagVenda('fiado')">Fiado (deve)</button>
+        </div>
+      </div>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+        <button class="btn-salvar" onclick="salvarVenda()">Registrar venda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Encomenda -->
+  <div class="modal-bg" id="modalEncomenda">
+    <div class="modal">
+      <div class="puxador"></div>
+      <h2>Nova encomenda</h2>
+      <div class="campo"><label>O que a cliente pediu</label><input type="text" id="eProduto" placeholder="Ex: Creme Nativa SPA"></div>
+      <div class="campo"><label>Cliente</label><input type="text" id="eCliente" placeholder="Nome da cliente"></div>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+        <button class="btn-salvar" onclick="salvarEncomenda()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1mu2Nfcx5d6x--tlyguFZn7UuZC2Mjs",
+    authDomain: "lista-compras-ludmilla.firebaseapp.com",
+    databaseURL: "https://lista-compras-ludmilla-default-rtdb.firebaseio.com",
+    projectId: "lista-compras-ludmilla",
+    storageBucket: "lista-compras-ludmilla.firebasestorage.app",
+    messagingSenderId: "607047869506",
+    appId: "1:607047869506:web:4f40c96b5d9713bbd1f9db"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const prodRef = db.ref('boticario/produtos');
+  const vendaRef = db.ref('boticario/vendas');
+  const encRef = db.ref('boticario/encomendas');
+  const acertoRef = db.ref('boticario/acertos');
+
+  let produtos = {}, vendas = {}, encomendas = {}, acertos = {};
+  let abaAtual = 'estoque';
+  let editandoProduto = null;
+  let pagVenda = 'pago';
+
+  const sync = document.getElementById('sync'), syncTxt = document.getElementById('sync-txt');
+  function marcaSync() { sync.classList.add('on'); syncTxt.textContent = 'Sincronizado'; }
+
+
+  // ===== CARGA INICIAL DOS PRODUTOS (só roda uma vez, se o estoque estiver vazio) =====
+  const PRODUTOS_INICIAIS = [{"nome": "Perfume Coffee Addictive Masculino", "categoria": "Perfume", "qtd": 1, "custo": 40, "venda": 43}, {"nome": "Perfume Egeo Blue Masculino", "categoria": "Perfume", "qtd": 1, "custo": 30, "venda": 35}, {"nome": "Kit Baby Casinha Boti", "categoria": "Kit", "qtd": 0, "custo": 25, "venda": 30}, {"nome": "Kit Nativa Spa Ameixa Negra", "categoria": "Kit", "qtd": 0, "custo": 38, "venda": 40}, {"nome": "Colônia Bot Lua", "categoria": "Perfume BB", "qtd": 0, "custo": 17, "venda": 17}, {"nome": "Sérum Leave-in Cabelo", "categoria": "Lily", "qtd": 0, "custo": 16, "venda": 16}, {"nome": "Creme de Banho Acetinado", "categoria": "Lily", "qtd": 0, "custo": 20, "venda": 22}, {"nome": "Hidratante Corporal Tradicional", "categoria": "Lily", "qtd": 3, "custo": 25, "venda": 28}, {"nome": "Hidratante Corporal Lumiere", "categoria": "Lily", "qtd": 1, "custo": 25, "venda": 28}, {"nome": "Hidratante Corporal Iluminador", "categoria": "Lily", "qtd": 1, "custo": 29, "venda": 35}, {"nome": "Kit Perfume e Sabonete líquido", "categoria": "Lily", "qtd": 1, "custo": 40, "venda": 60}, {"nome": "Óleo corpo e banho multifunção", "categoria": "Lily", "qtd": 1, "custo": 22, "venda": 26}, {"nome": "Óleo Perfumado Lily", "categoria": "Lily", "qtd": 0, "custo": 19, "venda": 25}, {"nome": "Kit para Mães com Brinco", "categoria": "Lily", "qtd": 0, "custo": 44, "venda": 55}, {"nome": "Shampoo Lily", "categoria": "Lily", "qtd": 0, "custo": 15, "venda": 20}, {"nome": "Loção Hidratante Masculino", "categoria": "Clash", "qtd": 1, "custo": 13, "venda": 15}, {"nome": "Creme Pré e Pós Barba", "categoria": "Clash", "qtd": 0, "custo": 13, "venda": 15}, {"nome": "Hidratante Corporal Pure Gold", "categoria": "Malbec", "qtd": 1, "custo": 13, "venda": 15}, {"nome": "Hidratante Corporal Tradicional (Malbec)", "categoria": "Malbec", "qtd": 1, "custo": 13, "venda": 15}, {"nome": "Malbec Perfume Masculino", "categoria": "Perfume", "qtd": 1, "custo": 44, "venda": 45}, {"nome": "Perfume Masculino Clash", "categoria": "Perfume", "qtd": 0, "custo": 40, "venda": 43}, {"nome": "Creme Hidratante Her Code", "categoria": "Her Code", "qtd": 1, "custo": 25, "venda": 28}, {"nome": "Perfume Liz", "categoria": "Perfume", "qtd": 2, "custo": 35, "venda": 40}, {"nome": "Perfume Liz Flora", "categoria": "Perfume", "qtd": 1, "custo": 35, "venda": 40}, {"nome": "Tônico Antiqueda Masculino", "categoria": "Malbec", "qtd": 1, "custo": 10, "venda": 13}, {"nome": "Hidratante Nuvem de Alegria", "categoria": "Cuide-se Bem", "qtd": 2, "custo": 15, "venda": 18}, {"nome": "Hidratante Nuvem", "categoria": "Cuide-se Bem", "qtd": 0, "custo": 15, "venda": 18}, {"nome": "Hidratante Pêssego", "categoria": "Cuide-se Bem", "qtd": 1, "custo": 15, "venda": 18}, {"nome": "Creme de Mãos Deleite", "categoria": "Cuide-se Bem", "qtd": 1, "custo": 8, "venda": 12}, {"nome": "Hidratante Deleite", "categoria": "Cuide-se Bem", "qtd": 1, "custo": 15, "venda": 18}, {"nome": "Sabonete Líquido Ameixa Negra", "categoria": "Nativa SPA", "qtd": 1, "custo": 14, "venda": 15}, {"nome": "Óleo Black Plum Ameixa Negra", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Body Splash Ameixa Negra", "categoria": "Nativa SPA", "qtd": 0, "custo": 22, "venda": 24}, {"nome": "Óleo Plum Blossom Flor de Ameixa", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Hidratante Plum Blossom Flor de Ameixa", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Hidratante Pitaya", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Óleo Uva Merlo", "categoria": "Nativa SPA", "qtd": 1, "custo": 19, "venda": 20}, {"nome": "Óleo Caviar", "categoria": "Nativa SPA", "qtd": 1, "custo": 19, "venda": 20}, {"nome": "Sabonete Líquido Uva Merlo", "categoria": "Nativa SPA", "qtd": 1, "custo": 14, "venda": 15}, {"nome": "Body Splash Uva Merlo", "categoria": "Nativa SPA", "qtd": 2, "custo": 22, "venda": 24}, {"nome": "Creme de Mãos Madagascar Baunilha", "categoria": "Nativa SPA", "qtd": 1, "custo": 12, "venda": 15}, {"nome": "Hidratante Madagascar Baunilha", "categoria": "Nativa SPA", "qtd": 1, "custo": 19, "venda": 20}, {"nome": "Hidratante Uva Merlo", "categoria": "Nativa SPA", "qtd": 2, "custo": 19, "venda": 20}, {"nome": "Hidratante Ameixa", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Óleo em Creme Ameixa", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Sabonete Líquido Açaí", "categoria": "Nativa SPA", "qtd": 1, "custo": 12, "venda": 17}, {"nome": "Esfoliante Corporal Pitaya", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Óleo Quinoa", "categoria": "Nativa SPA", "qtd": 0, "custo": 19, "venda": 20}, {"nome": "Sabonete líquido Quinoa", "categoria": "Nativa SPA", "qtd": 1, "custo": 13, "venda": 15}, {"nome": "Body Splash Quinoa", "categoria": "Nativa SPA", "qtd": 1, "custo": 21, "venda": 24}, {"nome": "Kit Açaí", "categoria": "Nativa SPA", "qtd": 1, "custo": 38, "venda": 38}, {"nome": "Spray de Lavanda", "categoria": "Avatim", "qtd": 0, "custo": 26, "venda": 26}, {"nome": "Essência Difusor Lavanda e Âmbar", "categoria": "Avatim", "qtd": 0, "custo": 23, "venda": 25}, {"nome": "Sabonete Esfoliante Cupuaçu e Castanha", "categoria": "Avatim", "qtd": 0, "custo": 14, "venda": 14}, {"nome": "Caixa", "categoria": "Raysia", "qtd": 2, "custo": 0.8, "venda": 2.5}, {"nome": "Kit da Pitaia", "categoria": "Kit", "qtd": 0, "custo": 38, "venda": 44.5}, {"nome": "Corretivo Quem Disse Berenice", "categoria": "Maquiagem", "qtd": 1, "custo": 11, "venda": 15}, {"nome": "Colônia Sophia like", "categoria": "BB", "qtd": 1, "custo": 25, "venda": 30}, {"nome": "Sophia Shampoo", "categoria": "BB", "qtd": 1, "custo": 9, "venda": 13}, {"nome": "Sophia Condicionador", "categoria": "BB", "qtd": 0, "custo": 9, "venda": 13}, {"nome": "Hidratante de Brilho Match", "categoria": "Cabelo", "qtd": 0, "custo": 17, "venda": 20}, {"nome": "Balm Labial Melancia", "categoria": "Batonzinho", "qtd": 0, "custo": 7, "venda": 10}];
+  let cargaVerificada = false;
+  prodRef.once('value').then(snap => {
+    // Se nunca foi carregado E o banco está vazio, carrega os produtos das fotos
+    if (!snap.exists()) {
+      const marcador = db.ref('boticario/_cargaInicial');
+      marcador.once('value').then(m => {
+        if (!m.exists()) {
+          const updates = {};
+          PRODUTOS_INICIAIS.forEach((p, i) => {
+            const novoId = prodRef.push().key;
+            updates['boticario/produtos/' + novoId] = { ...p, min: 0, criado: Date.now() + i };
+          });
+          updates['boticario/_cargaInicial'] = { feito: true, data: Date.now() };
+          db.ref().update(updates);
+        }
+      });
+    }
+  });
+
+  prodRef.on('value', s => { produtos = s.val() || {}; marcaSync(); render(); }, () => syncTxt.textContent = 'Sem conexão');
+  vendaRef.on('value', s => { vendas = s.val() || {}; marcaSync(); render(); });
+  encRef.on('value', s => { encomendas = s.val() || {}; marcaSync(); render(); });
+  acertoRef.on('value', s => { acertos = s.val() || {}; marcaSync(); render(); });
+
+  function fmt(v) { return 'CHF ' + Number(v).toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function fmtCurto(v) { return 'CHF ' + Number(v).toLocaleString('de-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  window.setAba = function(aba) {
+    abaAtual = aba;
+    document.querySelectorAll('.abas button').forEach(b => b.classList.toggle('ativa', b.dataset.aba === aba));
+    document.getElementById('secEstoque').style.display = aba === 'estoque' ? 'block' : 'none';
+    document.getElementById('secVendas').style.display = aba === 'vendas' ? 'block' : 'none';
+    document.getElementById('secReceber').style.display = aba === 'receber' ? 'block' : 'none';
+    document.getElementById('secEncomendas').style.display = aba === 'encomendas' ? 'block' : 'none';
+    document.getElementById('secAcertos').style.display = aba === 'acertos' ? 'block' : 'none';
+    const fabTxt = document.getElementById('fabTxt'), fab = document.getElementById('fab');
+    if (aba === 'estoque') { fabTxt.textContent = 'Novo produto'; fab.style.display = 'flex'; }
+    else if (aba === 'vendas') { fabTxt.textContent = 'Nova venda'; fab.style.display = 'flex'; }
+    else if (aba === 'encomendas') { fabTxt.textContent = 'Nova encomenda'; fab.style.display = 'flex'; }
+    else { fab.style.display = 'none'; }
+  };
+
+  window.abrirModal = function() {
+    if (abaAtual === 'estoque') abrirModalProduto();
+    else if (abaAtual === 'vendas') abrirModalVenda();
+    else if (abaAtual === 'encomendas') abrirModalEncomenda();
+  };
+  window.fecharModais = function() { document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('aberto')); };
+
+  // ---- PRODUTO ----
+  function abrirModalProduto() {
+    editandoProduto = null;
+    document.getElementById('tituloProduto').textContent = 'Novo produto';
+    ['pNome','pCategoria','pQtd','pMin','pCusto','pVenda'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('previaLucro').classList.remove('show');
+    document.getElementById('modalProduto').classList.add('aberto');
+  }
+  window.editarProduto = function(id) {
+    const p = produtos[id]; editandoProduto = id;
+    document.getElementById('tituloProduto').textContent = 'Editar produto';
+    document.getElementById('pNome').value = p.nome || '';
+    document.getElementById('pCategoria').value = p.categoria || '';
+    document.getElementById('pQtd').value = p.qtd != null ? p.qtd : '';
+    document.getElementById('pMin').value = p.min != null ? p.min : '';
+    document.getElementById('pCusto').value = p.custo != null ? p.custo : '';
+    document.getElementById('pVenda').value = p.venda != null ? p.venda : '';
+    previaLucro();
+    document.getElementById('modalProduto').classList.add('aberto');
+  };
+  // ===== CÁLCULOS (regra da Ludmilla) =====
+  // Lucro = 20% do custo (preço da dona) + o que ela acrescentou (venda - custo)
+  // Devolve pra fornecedora = custo - 20% do custo
+  const COMISSAO = 0.20;
+  function calcLucro(custo, venda) { return (custo * COMISSAO) + (venda - custo); }
+  function calcDevolve(custo) { return custo - (custo * COMISSAO); }
+
+  window.previaLucro = function() {
+    const custo = parseFloat(document.getElementById('pCusto').value) || 0;
+    const venda = parseFloat(document.getElementById('pVenda').value) || 0;
+    const el = document.getElementById('previaLucro');
+    if (custo > 0 || venda > 0) {
+      const lucro = calcLucro(custo, venda);
+      const devolve = calcDevolve(custo);
+      el.innerHTML = 'Seu lucro: <b>' + fmt(lucro) + '</b> · Devolve à fornecedora: <b>' + fmt(devolve) + '</b>';
+      el.classList.add('show');
+    } else { el.classList.remove('show'); }
+  };
+  window.salvarProduto = function() {
+    const nome = document.getElementById('pNome').value.trim();
+    const categoria = document.getElementById('pCategoria').value.trim();
+    const qtd = parseInt(document.getElementById('pQtd').value) || 0;
+    const min = parseInt(document.getElementById('pMin').value) || 0;
+    const custo = parseFloat(document.getElementById('pCusto').value) || 0;
+    const venda = parseFloat(document.getElementById('pVenda').value) || 0;
+    if (!nome) { alert('Digite o nome do produto.'); return; }
+    const dados = { nome, categoria, qtd, min, custo, venda };
+    if (editandoProduto) prodRef.child(editandoProduto).update(dados);
+    else prodRef.push({ ...dados, criado: Date.now() });
+    fecharModais();
+  };
+  window.apagarProduto = function(id) {
+    if (confirm('Apagar "' + (produtos[id].nome) + '" do estoque?')) prodRef.child(id).remove();
+  };
+
+  // ---- VENDA ----
+  function abrirModalVenda(idPreSelecionado) {
+    const sel = document.getElementById('vProduto');
+    const ids = Object.keys(produtos).sort((a,b) => (produtos[a].nome||'').localeCompare(produtos[b].nome||''));
+    if (ids.length === 0) { alert('Cadastre um produto no estoque primeiro.'); return; }
+    sel.innerHTML = ids.map(id => '<option value="' + id + '">' + esc(produtos[id].nome) + ' (' + (produtos[id].qtd||0) + ' em estoque)</option>').join('');
+    if (idPreSelecionado && produtos[idPreSelecionado]) sel.value = idPreSelecionado;
+    document.getElementById('vQtd').value = 1;
+    document.getElementById('vCliente').value = '';
+    setPagVenda('pago');
+    atualizaPrecoVenda();
+    document.getElementById('modalVenda').classList.add('aberto');
+  }
+  // Vender direto tocando no produto do estoque
+  window.venderProduto = function(id) {
+    if ((produtos[id].qtd||0) <= 0) {
+      if (!confirm('"' + produtos[id].nome + '" está sem estoque.\n\nQuer registrar a venda mesmo assim?')) return;
+    }
+    abrirModalVenda(id);
+  };
+  window.atualizaPrecoVenda = function() {
+    const id = document.getElementById('vProduto').value;
+    const qtd = parseInt(document.getElementById('vQtd').value) || 1;
+    if (produtos[id]) document.getElementById('vValor').value = ((produtos[id].venda||0) * qtd).toFixed(2);
+  };
+  window.setPagVenda = function(p) {
+    pagVenda = p;
+    document.getElementById('btnPago').className = p === 'pago' ? 'sel-pago' : '';
+    document.getElementById('btnFiado').className = p === 'fiado' ? 'sel-fiado' : '';
+  };
+  window.salvarVenda = function() {
+    const id = document.getElementById('vProduto').value;
+    const qtd = parseInt(document.getElementById('vQtd').value) || 0;
+    const valor = parseFloat(document.getElementById('vValor').value) || 0;
+    const cliente = document.getElementById('vCliente').value.trim();
+    if (!produtos[id]) { alert('Escolha um produto.'); return; }
+    if (qtd <= 0) { alert('Quantidade inválida.'); return; }
+    if (qtd > (produtos[id].qtd||0)) { if (!confirm('Você só tem ' + (produtos[id].qtd||0) + ' em estoque. Registrar mesmo assim?')) return; }
+    const custoUnit = produtos[id].custo || 0;
+    const vendaUnit = produtos[id].venda || 0;
+    const lucroTotal = calcLucro(custoUnit, vendaUnit) * qtd;
+    const devolveTotal = calcDevolve(custoUnit) * qtd;
+    // baixa do estoque
+    const novaQtd = Math.max(0, (produtos[id].qtd||0) - qtd);
+    prodRef.child(id).update({ qtd: novaQtd });
+    // registra venda (guarda lucro e valor a devolver para os acertos)
+    vendaRef.push({ produtoId: id, produtoNome: produtos[id].nome, qtd, valor, custo: custoUnit * qtd, lucro: lucroTotal, devolve: devolveTotal, cliente, pago: pagVenda === 'pago', data: new Date().toISOString().slice(0,10), criado: Date.now() });
+    fecharModais();
+    setAba('vendas');
+  };
+  window.marcarRecebido = function(id) {
+    vendaRef.child(id).update({ pago: true });
+  };
+  window.apagarVenda = function(id) {
+    if (confirm('Apagar esta venda? (o estoque não volta automaticamente)')) vendaRef.child(id).remove();
+  };
+
+  // ---- ENCOMENDA ----
+  function abrirModalEncomenda() {
+    document.getElementById('eProduto').value = '';
+    document.getElementById('eCliente').value = '';
+    document.getElementById('modalEncomenda').classList.add('aberto');
+  }
+  window.salvarEncomenda = function() {
+    const produto = document.getElementById('eProduto').value.trim();
+    const cliente = document.getElementById('eCliente').value.trim();
+    if (!produto) { alert('Escreva o que a cliente pediu.'); return; }
+    encRef.push({ produto, cliente, feito: false, criado: Date.now() });
+    fecharModais();
+  };
+  window.toggleEncomenda = function(id) { encRef.child(id).update({ feito: !encomendas[id].feito }); };
+  window.apagarEncomenda = function(id) { if (confirm('Apagar esta encomenda?')) encRef.child(id).remove(); };
+
+  // ---- RENDER ----
+  function render() {
+    // Resumo topo
+    let valEstoque = 0, lucroPrev = 0;
+    Object.values(produtos).forEach(p => {
+      valEstoque += (p.custo||0) * (p.qtd||0);
+      lucroPrev += calcLucro(p.custo||0, p.venda||0) * (p.qtd||0);
+    });
+    let aReceber = 0;
+    Object.values(vendas).forEach(v => { if (!v.pago) aReceber += (v.valor||0); });
+    document.getElementById('rtEstoque').textContent = fmtCurto(valEstoque);
+    document.getElementById('rtLucro').textContent = fmtCurto(lucroPrev);
+    document.getElementById('rtReceber').textContent = fmtCurto(aReceber);
+
+    renderEstoque(); renderVendas(); renderReceber(); renderEncomendas(); renderAcertos();
+  }
+
+  function renderEstoque() {
+    // Preenche o datalist de categorias existentes
+    const cats = [...new Set(Object.values(produtos).map(p => p.categoria).filter(Boolean))].sort();
+    document.getElementById('listaCategorias').innerHTML = cats.map(c => '<option value="' + esc(c) + '">').join('');
+    // Ordena por categoria e depois por nome
+    const ids = Object.keys(produtos).sort((a,b) => {
+      const ca = (produtos[a].categoria||'zzz'), cb = (produtos[b].categoria||'zzz');
+      if (ca !== cb) return ca.localeCompare(cb);
+      return (produtos[a].nome||'').localeCompare(produtos[b].nome||'');
+    });
+    document.getElementById('contProdutos').textContent = ids.length ? ids.length + ' produtos' : '';
+    const dica = document.getElementById('dicaVenda');
+    if (dica) dica.style.display = ids.length ? 'block' : 'none';
+    const el = document.getElementById('listaEstoque');
+    if (ids.length === 0) { el.innerHTML = '<div class="vazio"><span class="ic">📦</span>Nenhum produto ainda.<br>Toque em "Novo produto" para começar.</div>'; return; }
+    el.innerHTML = ids.map(id => {
+      const p = produtos[id], qtd = p.qtd||0, min = p.min||0;
+      const lucro = calcLucro(p.custo||0, p.venda||0);
+      let classe = 'qtd-badge';
+      if (qtd === 0) classe += ' zero'; else if (qtd <= min) classe += ' baixo';
+      return '<div class="card prod">' +
+        '<div class="area-venda" onclick="venderProduto(\'' + id + '\')">' +
+        '<div class="' + classe + '"><span class="n">' + qtd + '</span><span class="u">un</span></div>' +
+        '<div class="info"><div class="nome">' + esc(p.nome) + '</div>' +
+        (p.categoria ? '<div class="precos" style="color:var(--rose);font-weight:600;">' + esc(p.categoria) + '</div>' : '') +
+        '<div class="precos">Custo ' + fmt(p.custo||0) + ' · Venda ' + fmt(p.venda||0) + '</div>' +
+        '<div class="lucro">Lucro ' + fmt(lucro) + ' por unidade</div></div>' +
+        '<div class="seta">›</div></div>' +
+        '<div class="acoes"><button onclick="editarProduto(\'' + id + '\')">✎</button><button onclick="apagarProduto(\'' + id + '\')">✕</button></div></div>';
+    }).join('');
+  }
+
+  function renderVendas() {
+    const ids = Object.keys(vendas).sort((a,b) => (vendas[b].criado||0)-(vendas[a].criado||0));
+    document.getElementById('contVendas').textContent = ids.length ? ids.length + ' vendas' : '';
+    const el = document.getElementById('listaVendas');
+    if (ids.length === 0) { el.innerHTML = '<div class="vazio"><span class="ic">💰</span>Nenhuma venda registrada.<br>Toque em "Nova venda" para começar.</div>'; return; }
+    el.innerHTML = ids.map(id => {
+      const v = vendas[id];
+      const tag = v.pago ? '<span class="tag pago">Pago</span>' : '<span class="tag fiado">Fiado</span>';
+      const cli = v.cliente ? v.cliente + ' · ' : '';
+      return '<div class="card venda-item"><div class="info"><div class="nome">' + (v.qtd>1?v.qtd+'x ':'') + esc(v.produtoNome) + '</div>' +
+        '<div class="meta">' + esc(cli) + dataFmt(v.data) + ' &nbsp; ' + tag + '</div></div>' +
+        '<div class="valor">' + fmt(v.valor) + '</div>' +
+        '<div class="acoes"><button onclick="apagarVenda(\'' + id + '\')" style="background:none;border:none;color:#C0A0A0;font-size:14px;cursor:pointer;padding:4px 6px;">✕</button></div></div>';
+    }).join('');
+  }
+
+  function renderReceber() {
+    const ids = Object.keys(vendas).filter(id => !vendas[id].pago).sort((a,b) => (vendas[b].criado||0)-(vendas[a].criado||0));
+    let total = 0; ids.forEach(id => total += (vendas[id].valor||0));
+    document.getElementById('contReceber').textContent = ids.length ? fmt(total) + ' no total' : '';
+    const el = document.getElementById('listaReceber');
+    if (ids.length === 0) { el.innerHTML = '<div class="vazio"><span class="ic">✓</span>Ninguém te deve nada!<br>Está tudo em dia. 🌸</div>'; return; }
+    el.innerHTML = ids.map(id => {
+      const v = vendas[id];
+      return '<div class="card deve-item"><div class="info"><div class="nome">' + esc(v.cliente || 'Cliente') + '</div>' +
+        '<div class="meta">' + (v.qtd>1?v.qtd+'x ':'') + esc(v.produtoNome) + ' · ' + dataFmt(v.data) + '</div></div>' +
+        '<div class="valor">' + fmt(v.valor) + '</div>' +
+        '<button class="btn-receber" onclick="marcarRecebido(\'' + id + '\')">Recebi</button></div>';
+    }).join('');
+  }
+
+  function renderEncomendas() {
+    const ids = Object.keys(encomendas).sort((a,b) => {
+      if ((encomendas[a].feito?1:0) !== (encomendas[b].feito?1:0)) return (encomendas[a].feito?1:0)-(encomendas[b].feito?1:0);
+      return (encomendas[b].criado||0)-(encomendas[a].criado||0);
+    });
+    const pend = ids.filter(id => !encomendas[id].feito).length;
+    document.getElementById('contEncomendas').textContent = pend ? pend + ' pendentes' : '';
+    const el = document.getElementById('listaEncomendas');
+    if (ids.length === 0) { el.innerHTML = '<div class="vazio"><span class="ic">🛍️</span>Nenhuma encomenda.<br>Toque em "Nova encomenda" para começar.</div>'; return; }
+    el.innerHTML = ids.map(id => {
+      const e = encomendas[id];
+      const cli = e.cliente ? ' · ' + e.cliente : '';
+      return '<div class="card enc-item ' + (e.feito?'feito':'') + '"><div class="check" onclick="toggleEncomenda(\'' + id + '\')">' + (e.feito?'✓':'') + '</div>' +
+        '<div class="info"><div class="nome">' + esc(e.produto) + '</div><div class="meta">Pedido' + esc(cli) + '</div></div>' +
+        '<div class="acoes"><button onclick="apagarEncomenda(\'' + id + '\')">✕</button></div></div>';
+    }).join('');
+  }
+
+  function dataFmt(d) { if (!d) return ''; const p = d.split('-'); return p[2] + '/' + p[1]; }
+
+  // ===== ACERTOS =====
+  function renderAcertos() {
+    // Painel do acerto atual (vendas ainda não fechadas em um acerto)
+    const idsVendas = Object.keys(vendas);
+    let totVendido = 0, totLucro = 0, totDevolve = 0;
+    idsVendas.forEach(id => {
+      const v = vendas[id];
+      totVendido += (v.valor||0);
+      totLucro += (v.lucro||0);
+      totDevolve += (v.devolve||0);
+    });
+    const painel = document.getElementById('painelAcertoAtual');
+    painel.innerHTML = '<h3>🤝 Acerto atual</h3>' +
+      '<div class="pa-linha"><span class="lab">Vendas no período</span><span class="val">' + idsVendas.length + '</span></div>' +
+      '<div class="pa-linha"><span class="lab">Total vendido</span><span class="val">' + fmt(totVendido) + '</span></div>' +
+      '<div class="pa-linha lucro"><span class="lab">Seu lucro</span><span class="val">' + fmt(totLucro) + '</span></div>' +
+      '<div class="pa-linha destaque"><span class="lab">Pagar à fornecedora</span><span class="val">' + fmt(totDevolve) + '</span></div>' +
+      '<button class="btn-fechar-acerto" onclick="fecharAcerto()"' + (idsVendas.length === 0 ? ' disabled' : '') + '>Fechar acerto e começar novo período</button>' +
+      (idsVendas.length === 0 ? '<div style="text-align:center;font-size:12px;color:var(--cinza);margin-top:10px;">Nenhuma venda para fechar ainda.</div>' : '');
+
+    // Histórico
+    const idsAcertos = Object.keys(acertos).sort((a,b) => (acertos[b].criado||0)-(acertos[a].criado||0));
+    const lista = document.getElementById('listaAcertos');
+    if (idsAcertos.length === 0) {
+      lista.innerHTML = '<div class="vazio"><span class="ic">📖</span>Nenhum acerto fechado ainda.</div>';
+      return;
+    }
+    lista.innerHTML = idsAcertos.map(id => {
+      const a = acertos[id];
+      const dt = new Date(a.criado);
+      const dataTxt = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0') + '/' + dt.getFullYear();
+      const itens = (a.vendas || []).map(v =>
+        '<div class="dv"><span>' + (v.qtd>1?v.qtd+'x ':'') + esc(v.produtoNome) + (v.cliente?' · '+esc(v.cliente):'') + '</span><span>' + fmt(v.valor) + (v.pago===false?' (fiado)':'') + '</span></div>'
+      ).join('');
+      return '<div class="acerto-hist"><div class="cab"><span class="data">Acerto de ' + dataTxt + '</span>' +
+        '<span class="pago-forn">Pago: ' + fmt(a.devolve||0) + '</span></div>' +
+        '<div class="mini">' + (a.qtdVendas||0) + ' vendas · Total ' + fmt(a.vendido||0) + ' · Lucro ' + fmt(a.lucro||0) + '</div>' +
+        '<span class="ver" onclick="verDetalheAcerto(\'' + id + '\')">Ver produtos vendidos ›</span>' +
+        '<div class="acerto-detalhe" id="det-' + id + '">' + (itens || '<div class="dv">Sem itens</div>') + '</div></div>';
+    }).join('');
+  }
+
+  window.verDetalheAcerto = function(id) {
+    document.getElementById('det-' + id).classList.toggle('show');
+  };
+
+  window.fecharAcerto = function() {
+    const idsVendas = Object.keys(vendas);
+    if (idsVendas.length === 0) return;
+    let totVendido = 0, totLucro = 0, totDevolve = 0;
+    const listaVendas = [];
+    idsVendas.forEach(id => {
+      const v = vendas[id];
+      totVendido += (v.valor||0); totLucro += (v.lucro||0); totDevolve += (v.devolve||0);
+      listaVendas.push({ produtoNome: v.produtoNome, qtd: v.qtd, valor: v.valor, cliente: v.cliente || '', pago: v.pago !== false, data: v.data });
+    });
+    const msg = 'Fechar este acerto?\n\n' +
+      '• Total vendido: ' + fmt(totVendido) + '\n' +
+      '• Seu lucro: ' + fmt(totLucro) + '\n' +
+      '• Pagar à fornecedora: ' + fmt(totDevolve) + '\n\n' +
+      'As vendas vão para o histórico e você começa um novo período. O estoque continua igual.';
+    if (!confirm(msg)) return;
+    // Salva o acerto no histórico
+    acertoRef.push({ criado: Date.now(), vendido: totVendido, lucro: totLucro, devolve: totDevolve, qtdVendas: idsVendas.length, vendas: listaVendas });
+    // Limpa as vendas do período atual
+    vendaRef.remove();
+    alert('Acerto fechado! 🌸\nVocê pagou ' + fmt(totDevolve) + ' à fornecedora.\nAgora é só adicionar os produtos novos que ela trouxe.');
+    setAba('acertos');
+  };
+
+  document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) fecharModais(); }));
+</script>
+</body>
+</html>
