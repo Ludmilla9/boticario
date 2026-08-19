@@ -75,6 +75,16 @@
   .btn-pdf { width: 100%; margin-bottom: 14px; padding: 13px; background: var(--rose); color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-pdf:active { opacity: 0.85; }
   .btn-pdf:disabled { opacity: 0.4; }
+  .pdf-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+  .pdf-item:last-child { border-bottom: none; }
+  .pdf-item .pnome { flex: 1; font-size: 14px; min-width: 0; }
+  .pdf-item.rem .pnome { text-decoration: line-through; color: var(--cinza); }
+  .pdf-item .qtd-ctrl { display: flex; align-items: center; gap: 8px; }
+  .pdf-item .qtd-ctrl button { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--linha); background: var(--cartao); font-size: 17px; font-weight: 600; color: var(--rose); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .pdf-item .qtd-ctrl .q { min-width: 26px; text-align: center; font-size: 15px; font-weight: 700; }
+  .pdf-item .lixo { background: none; border: none; color: var(--cinza); font-size: 15px; cursor: pointer; padding: 4px 6px; }
+  .pdf-item.rem .lixo { color: var(--verde); }
+  .pdf-item.rem .qtd-ctrl { opacity: 0.35; pointer-events: none; }
   .painel-acerto { background: var(--cartao); border: 1px solid var(--linha); border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(43,32,36,0.05); margin-top: 4px; }
   .painel-acerto h3 { font-family: Georgia, serif; font-size: 16px; margin-bottom: 14px; text-align: center; }
   .pa-linha { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--linha); font-size: 14px; }
@@ -230,6 +240,21 @@
       <div class="modal-botoes">
         <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
         <button class="btn-salvar" onclick="salvarEncomenda()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Revisar PDF -->
+  <div class="modal-bg" id="modalPdf">
+    <div class="modal">
+      <div class="puxador"></div>
+      <h2>Revisar antes de gerar</h2>
+      <p style="text-align:center;font-size:12.5px;color:var(--cinza-2);margin:-8px 0 16px;">Confira a lista, ajuste as quantidades ou tire um produto. Você também pode escrever uma observação.</p>
+      <div id="listaPdfRevisar"></div>
+      <div class="campo" style="margin-top:16px;"><label>Observação (opcional)</label><textarea id="pdfObs" rows="3" placeholder="Ex: Faltou o perfume Malbec, chegou tudo certo, etc." style="width:100%;padding:13px;border:1px solid var(--linha);border-radius:11px;font-size:15px;color:var(--tinta);outline:none;background:var(--cartao);font-family:inherit;resize:vertical;"></textarea></div>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModais()">Cancelar</button>
+        <button class="btn-salvar" onclick="confirmarGerarPDF()">📄 Gerar PDF</button>
       </div>
     </div>
   </div>
@@ -433,6 +458,8 @@
   };
 
   // ---- PDF PARA A FORNECEDORA ----
+  let pdfLista = []; // lista editável: {nome, qtd, remover}
+
   window.gerarPDF = function() {
     const idsVendas = Object.keys(vendas);
     if (idsVendas.length === 0) { alert('Não há vendas registradas para gerar o PDF.'); return; }
@@ -443,7 +470,37 @@
       const nome = v.produtoNome || 'Produto';
       somados[nome] = (somados[nome] || 0) + (v.qtd || 0);
     });
-    const nomes = Object.keys(somados).sort((a,b) => a.localeCompare(b));
+    pdfLista = Object.keys(somados).sort((a,b) => a.localeCompare(b)).map(nome => ({ nome, qtd: somados[nome], remover: false }));
+    document.getElementById('pdfObs').value = '';
+    renderPdfRevisar();
+    document.getElementById('modalPdf').classList.add('aberto');
+  };
+
+  function renderPdfRevisar() {
+    const cont = document.getElementById('listaPdfRevisar');
+    cont.innerHTML = pdfLista.map((it, i) =>
+      '<div class="pdf-item' + (it.remover ? ' rem' : '') + '">' +
+      '<span class="pnome">' + esc(it.nome) + '</span>' +
+      '<div class="qtd-ctrl"><button onclick="pdfQtd(' + i + ',-1)">−</button>' +
+      '<span class="q">' + it.qtd + '</span>' +
+      '<button onclick="pdfQtd(' + i + ',1)">+</button></div>' +
+      '<button class="lixo" onclick="pdfRemover(' + i + ')">' + (it.remover ? '↩︎' : '🗑') + '</button>' +
+      '</div>'
+    ).join('');
+  }
+  window.pdfQtd = function(i, delta) {
+    pdfLista[i].qtd = Math.max(1, pdfLista[i].qtd + delta);
+    renderPdfRevisar();
+  };
+  window.pdfRemover = function(i) {
+    pdfLista[i].remover = !pdfLista[i].remover;
+    renderPdfRevisar();
+  };
+
+  window.confirmarGerarPDF = function() {
+    const itens = pdfLista.filter(it => !it.remover);
+    if (itens.length === 0) { alert('A lista está vazia. Adicione ao menos um produto.'); return; }
+    const obs = document.getElementById('pdfObs').value.trim();
 
     if (!window.jspdf || !window.jspdf.jsPDF) { alert('Não foi possível carregar o gerador de PDF. Verifique sua internet e tente de novo.'); return; }
     const { jsPDF } = window.jspdf;
@@ -452,7 +509,6 @@
     const dt = new Date();
     const dataTxt = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0') + '/' + dt.getFullYear();
 
-    // Cabeçalho
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.text('Ludmilla Nail Design', 105, 22, { align: 'center' });
@@ -464,11 +520,9 @@
     doc.text('Data: ' + dataTxt, 105, 39, { align: 'center' });
     doc.setTextColor(0);
 
-    // linha separadora
     doc.setDrawColor(200);
     doc.line(20, 45, 190, 45);
 
-    // Cabeçalho da tabela
     let y = 55;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
@@ -479,23 +533,18 @@
     doc.line(20, y, 190, y);
     y += 7;
 
-    // Lista de produtos
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
     let totalItens = 0;
-    nomes.forEach(nome => {
-      const q = somados[nome];
-      totalItens += q;
-      // quebra de página se necessário
+    itens.forEach(it => {
+      totalItens += it.qtd;
       if (y > 275) { doc.addPage(); y = 20; }
-      // nome pode ser longo — limita a largura
-      const linhas = doc.splitTextToSize(nome, 150);
+      const linhas = doc.splitTextToSize(it.nome, 150);
       doc.text(linhas, 20, y);
-      doc.text(String(q), 180, y, { align: 'right' });
+      doc.text(String(it.qtd), 180, y, { align: 'right' });
       y += (linhas.length * 6) + 3;
     });
 
-    // Total
     y += 4;
     if (y > 275) { doc.addPage(); y = 20; }
     doc.setDrawColor(200);
@@ -505,8 +554,24 @@
     doc.text('Total de itens', 20, y);
     doc.text(String(totalItens), 180, y, { align: 'right' });
 
-    // Salva
+    // Observação
+    if (obs) {
+      y += 14;
+      if (y > 265) { doc.addPage(); y = 20; }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('Observação:', 20, y);
+      y += 7;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(60);
+      const obsLinhas = doc.splitTextToSize(obs, 170);
+      doc.text(obsLinhas, 20, y);
+      doc.setTextColor(0);
+    }
+
     doc.save('Produtos vendidos - ' + dataTxt.replace(/\//g,'-') + '.pdf');
+    fecharModais();
   };
 
   // ---- RENDER ----
