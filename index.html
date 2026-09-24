@@ -37,17 +37,25 @@
   .secao-titulo { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 4px 12px; }
   .secao-titulo .t { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--cinza-2); font-weight: 600; }
   .secao-titulo .x { font-size: 11px; color: var(--cinza); }
+  .busca-wrap { position: relative; margin-bottom: 12px; }
+  .busca-wrap .lupa { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: 0.5; pointer-events: none; }
+  .busca-wrap input { width: 100%; padding: 12px 38px 12px 40px; border: 1px solid var(--linha); border-radius: 12px; font-size: 15px; background: var(--cartao); color: var(--tinta); outline: none; font-family: inherit; }
+  .busca-wrap input:focus { border-color: var(--rose); }
+  .busca-wrap .limpar { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: var(--linha); border: none; width: 22px; height: 22px; border-radius: 50%; color: var(--cinza-2); font-size: 13px; cursor: pointer; display: none; }
+  .busca-wrap .limpar.show { display: block; }
   .card { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 15px; margin-bottom: 9px; box-shadow: 0 2px 8px rgba(43,32,36,0.04); }
   .prod { display: flex; align-items: center; gap: 12px; }
-  .prod .qtd-badge { flex: 0 0 auto; min-width: 44px; height: 44px; border-radius: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--verde-bg); }
-  .prod .qtd-badge .n { font-size: 17px; font-weight: 700; color: var(--verde); line-height: 1; }
-  .prod .qtd-badge .u { font-size: 8px; color: var(--verde); text-transform: uppercase; letter-spacing: 0.5px; }
+  .prod .foto { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 11px; object-fit: cover; background: var(--creme); border: 1px solid var(--linha); }
+  .prod .foto-vazia { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 11px; background: var(--creme); border: 1px dashed var(--linha); display: flex; align-items: center; justify-content: center; font-size: 20px; opacity: 0.5; }
+  .prod .qtd-badge { flex: 0 0 auto; min-width: 38px; height: 38px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--verde-bg); }
+  .prod .qtd-badge .n { font-size: 15px; font-weight: 700; color: var(--verde); line-height: 1; }
+  .prod .qtd-badge .u { font-size: 7px; color: var(--verde); text-transform: uppercase; letter-spacing: 0.5px; }
   .prod .qtd-badge.baixo { background: var(--ambar-bg); }
   .prod .qtd-badge.baixo .n, .prod .qtd-badge.baixo .u { color: var(--ambar); }
   .prod .qtd-badge.zero { background: var(--vinho-bg); }
   .prod .qtd-badge.zero .n, .prod .qtd-badge.zero .u { color: var(--vinho); }
   .prod .info { flex: 1; min-width: 0; }
-  .prod .nome { font-size: 15px; font-weight: 600; }
+  .prod .nome { font-size: 14.5px; font-weight: 600; }
   .prod .precos { font-size: 12px; color: var(--cinza); margin-top: 3px; }
   .prod .lucro { font-size: 11.5px; color: var(--verde); font-weight: 600; margin-top: 2px; }
   .prod .acoes { display: flex; flex-direction: column; gap: 2px; }
@@ -61,6 +69,8 @@
   .venda-item .nome, .deve-item .nome, .enc-item .nome { font-size: 14.5px; font-weight: 600; }
   .venda-item .meta, .deve-item .meta, .enc-item .meta { font-size: 11.5px; color: var(--cinza); margin-top: 3px; }
   .venda-item .valor { font-size: 15px; font-weight: 700; font-family: Georgia, serif; color: var(--verde); white-space: nowrap; }
+  .venda-item .acoes-v { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .btn-cancelar-venda { background: none; border: none; color: var(--vinho); font-size: 11px; cursor: pointer; padding: 2px 4px; text-decoration: underline; }
   .tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
   .tag.pago { background: var(--verde-bg); color: var(--verde); }
   .tag.fiado { background: var(--vinho-bg); color: var(--vinho); }
@@ -73,15 +83,12 @@
   .vazio { text-align: center; color: var(--cinza); padding: 40px 20px; font-size: 13.5px; line-height: 1.6; }
   .vazio .ic { font-size: 32px; opacity: 0.4; display: block; margin-bottom: 10px; }
   .btn-pdf { width: 100%; margin-bottom: 14px; padding: 13px; background: var(--rose); color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-pdf:active { opacity: 0.85; }
-  .btn-pdf:disabled { opacity: 0.4; }
+  .btn-pdf:active { opacity: 0.85; } .btn-pdf:disabled { opacity: 0.4; }
   .pdf-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--linha); }
   .pdf-item:last-child { border-bottom: none; }
-  .pdf-item .pnome { flex: 1; font-size: 14px; min-width: 0; }
   .pdf-item .pnome-edit { flex: 1; min-width: 0; font-size: 14px; padding: 8px 10px; border: 1px solid var(--linha); border-radius: 9px; background: var(--cartao); color: var(--tinta); outline: none; font-family: inherit; }
   .pdf-item .pnome-edit:focus { border-color: var(--rose); }
   .pdf-item .pnome-edit:disabled { text-decoration: line-through; color: var(--cinza); background: transparent; border-color: transparent; }
-  .pdf-item.rem .pnome { text-decoration: line-through; color: var(--cinza); }
   .pdf-item .qtd-ctrl { display: flex; align-items: center; gap: 8px; }
   .pdf-item .qtd-ctrl button { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--linha); background: var(--cartao); font-size: 17px; font-weight: 600; color: var(--rose); cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .pdf-item .qtd-ctrl .q { min-width: 26px; text-align: center; font-size: 15px; font-weight: 700; }
@@ -120,6 +127,12 @@
   .campo label { display: block; font-size: 11.5px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--cinza-2); font-weight: 600; margin-bottom: 7px; }
   .campo input, .campo select { width: 100%; padding: 13px; border: 1px solid var(--linha); border-radius: 11px; font-size: 16px; color: var(--tinta); outline: none; background: var(--cartao); font-family: inherit; }
   .campo input:focus, .campo select:focus { border-color: var(--rose); }
+  .foto-campo { display: flex; align-items: center; gap: 14px; }
+  .foto-preview { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 1px solid var(--linha); background: var(--creme); }
+  .foto-preview-vazia { width: 70px; height: 70px; border-radius: 12px; border: 1px dashed var(--linha); background: var(--creme); display: flex; align-items: center; justify-content: center; font-size: 26px; opacity: 0.5; }
+  .foto-botoes { display: flex; flex-direction: column; gap: 7px; }
+  .btn-foto { padding: 9px 14px; border: 1px solid var(--linha); background: var(--cartao); border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--rose); cursor: pointer; }
+  .btn-foto-rem { color: var(--vinho); }
   .dois { display: flex; gap: 10px; }
   .dois .campo { flex: 1; }
   .previa-lucro { background: var(--verde-bg); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; color: var(--verde); font-weight: 600; margin-bottom: 14px; text-align: center; display: none; }
@@ -159,6 +172,11 @@
 
     <div class="secao" id="secEstoque">
       <div class="secao-titulo"><span class="t">Meus produtos</span><span class="x" id="contProdutos"></span></div>
+      <div class="busca-wrap">
+        <span class="lupa">🔍</span>
+        <input type="text" id="buscaEstoque" placeholder="Procurar produto..." oninput="filtrarEstoque(this.value)">
+        <button class="limpar" id="limparBusca" onclick="limparBusca()">✕</button>
+      </div>
       <div class="dica-venda" id="dicaVenda">👆 Toque no produto para registrar uma venda</div>
       <div id="listaEstoque"></div>
     </div>
@@ -192,6 +210,18 @@
     <div class="modal">
       <div class="puxador"></div>
       <h2 id="tituloProduto">Novo produto</h2>
+      <div class="campo">
+        <label>Foto do produto</label>
+        <div class="foto-campo">
+          <img id="pFotoPreview" class="foto-preview" style="display:none;" alt="">
+          <div id="pFotoVazia" class="foto-preview-vazia">📷</div>
+          <div class="foto-botoes">
+            <button type="button" class="btn-foto" onclick="document.getElementById('pFotoInput').click()">Escolher foto</button>
+            <button type="button" class="btn-foto btn-foto-rem" id="btnRemoverFoto" onclick="removerFoto()" style="display:none;">Remover foto</button>
+          </div>
+          <input type="file" id="pFotoInput" accept="image/*" style="display:none;" onchange="aoEscolherFoto(event)">
+        </div>
+      </div>
       <div class="campo"><label>Nome do produto</label><input type="text" id="pNome" placeholder="Ex: Perfume Malbec 100ml"></div>
       <div class="campo"><label>Categoria</label><input type="text" id="pCategoria" placeholder="Ex: Nativa SPA, Perfume, Kit..." list="listaCategorias"><datalist id="listaCategorias"></datalist></div>
       <div class="dois">
@@ -247,7 +277,6 @@
     </div>
   </div>
 
-  <!-- Modal Revisar PDF -->
   <div class="modal-bg" id="modalPdf">
     <div class="modal">
       <div class="puxador"></div>
@@ -285,6 +314,8 @@
   let abaAtual = 'estoque';
   let editandoProduto = null;
   let pagVenda = 'pago';
+  let fotoAtual = null;          // foto em edição no modal (base64 ou null)
+  let termoBusca = '';           // texto da busca no estoque
 
   const sync = document.getElementById('sync'), syncTxt = document.getElementById('sync-txt');
   function marcaSync() { sync.classList.add('on'); syncTxt.textContent = 'Sincronizado'; }
@@ -316,6 +347,9 @@
   function fmt(v) { return 'CHF ' + Number(v).toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+  // Tira acentos pra busca funcionar mesmo sem acento
+  function semAcento(s) { return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
   // ===== CÁLCULOS (regra da Ludmilla) =====
   const COMISSAO = 0.20;
   function calcLucro(custo, venda) { return (custo * COMISSAO) + (venda - custo); }
@@ -343,16 +377,74 @@
   };
   window.fecharModais = function() { document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('aberto')); };
 
+  // ---- BUSCA NO ESTOQUE ----
+  window.filtrarEstoque = function(v) {
+    termoBusca = v;
+    document.getElementById('limparBusca').classList.toggle('show', v.length > 0);
+    renderEstoque();
+  };
+  window.limparBusca = function() {
+    termoBusca = '';
+    document.getElementById('buscaEstoque').value = '';
+    document.getElementById('limparBusca').classList.remove('show');
+    renderEstoque();
+  };
+
+  // ---- FOTO ----
+  function mostrarFotoNoModal(foto) {
+    const prev = document.getElementById('pFotoPreview');
+    const vazia = document.getElementById('pFotoVazia');
+    const btnRem = document.getElementById('btnRemoverFoto');
+    if (foto) {
+      prev.src = foto; prev.style.display = 'block';
+      vazia.style.display = 'none'; btnRem.style.display = 'block';
+    } else {
+      prev.style.display = 'none'; prev.src = '';
+      vazia.style.display = 'flex'; btnRem.style.display = 'none';
+    }
+  }
+  window.aoEscolherFoto = function(ev) {
+    const file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    // Redimensiona a imagem pra não ficar pesada (máx ~500px)
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const max = 500;
+        let w = img.width, h = img.height;
+        if (w > h && w > max) { h = h * max / w; w = max; }
+        else if (h > max) { w = w * max / h; h = max; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        fotoAtual = canvas.toDataURL('image/jpeg', 0.75);
+        mostrarFotoNoModal(fotoAtual);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  window.removerFoto = function() {
+    fotoAtual = null;
+    document.getElementById('pFotoInput').value = '';
+    mostrarFotoNoModal(null);
+  };
+
   // ---- PRODUTO ----
   function abrirModalProduto() {
     editandoProduto = null;
+    fotoAtual = null;
     document.getElementById('tituloProduto').textContent = 'Novo produto';
     ['pNome','pCategoria','pQtd','pMin','pCusto','pVenda'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pFotoInput').value = '';
+    mostrarFotoNoModal(null);
     document.getElementById('previaLucro').classList.remove('show');
     document.getElementById('modalProduto').classList.add('aberto');
   }
   window.editarProduto = function(id) {
     const p = produtos[id]; editandoProduto = id;
+    fotoAtual = p.foto || null;
     document.getElementById('tituloProduto').textContent = 'Editar produto';
     document.getElementById('pNome').value = p.nome || '';
     document.getElementById('pCategoria').value = p.categoria || '';
@@ -360,6 +452,8 @@
     document.getElementById('pMin').value = p.min != null ? p.min : '';
     document.getElementById('pCusto').value = p.custo != null ? p.custo : '';
     document.getElementById('pVenda').value = p.venda != null ? p.venda : '';
+    document.getElementById('pFotoInput').value = '';
+    mostrarFotoNoModal(fotoAtual);
     previaLucro();
     document.getElementById('modalProduto').classList.add('aberto');
   };
@@ -382,7 +476,7 @@
     const custo = parseFloat(document.getElementById('pCusto').value) || 0;
     const venda = parseFloat(document.getElementById('pVenda').value) || 0;
     if (!nome) { alert('Digite o nome do produto.'); return; }
-    const dados = { nome, categoria, qtd, min, custo, venda };
+    const dados = { nome, categoria, qtd, min, custo, venda, foto: fotoAtual || null };
     if (editandoProduto) prodRef.child(editandoProduto).update(dados);
     else prodRef.push({ ...dados, criado: Date.now() });
     fecharModais();
@@ -439,6 +533,18 @@
   window.marcarRecebido = function(id) {
     vendaRef.child(id).update({ pago: true });
   };
+  // ---- CANCELAR VENDA (devolve ao estoque) ----
+  window.cancelarVenda = function(id) {
+    const v = vendas[id];
+    if (!v) return;
+    if (!confirm('Cancelar esta venda?\n\n' + (v.qtd>1?v.qtd+'x ':'') + (v.produtoNome||'') + '\n\nO produto volta para o estoque.')) return;
+    // devolve a quantidade ao estoque, se o produto ainda existir
+    if (v.produtoId && produtos[v.produtoId]) {
+      const novaQtd = (produtos[v.produtoId].qtd||0) + (v.qtd||0);
+      prodRef.child(v.produtoId).update({ qtd: novaQtd });
+    }
+    vendaRef.child(id).remove();
+  };
 
   // ---- ENCOMENDA ----
   function abrirModalEncomenda() {
@@ -461,12 +567,10 @@
   };
 
   // ---- PDF PARA A FORNECEDORA ----
-  let pdfLista = []; // lista editável: {nome, qtd, remover}
-
+  let pdfLista = [];
   window.gerarPDF = function() {
     const idsVendas = Object.keys(vendas);
     if (idsVendas.length === 0) { alert('Não há vendas registradas para gerar o PDF.'); return; }
-    // Soma as quantidades por nome de produto
     const somados = {};
     idsVendas.forEach(id => {
       const v = vendas[id];
@@ -478,7 +582,6 @@
     renderPdfRevisar();
     document.getElementById('modalPdf').classList.add('aberto');
   };
-
   function renderPdfRevisar() {
     const cont = document.getElementById('listaPdfRevisar');
     cont.innerHTML = pdfLista.map((it, i) =>
@@ -491,56 +594,30 @@
       '</div>'
     ).join('');
   }
-  window.pdfNome = function(i, valor) {
-    pdfLista[i].nome = valor;
-  };
-  window.pdfQtd = function(i, delta) {
-    pdfLista[i].qtd = Math.max(1, pdfLista[i].qtd + delta);
-    renderPdfRevisar();
-  };
-  window.pdfRemover = function(i) {
-    pdfLista[i].remover = !pdfLista[i].remover;
-    renderPdfRevisar();
-  };
-
+  window.pdfNome = function(i, valor) { pdfLista[i].nome = valor; };
+  window.pdfQtd = function(i, delta) { pdfLista[i].qtd = Math.max(1, pdfLista[i].qtd + delta); renderPdfRevisar(); };
+  window.pdfRemover = function(i) { pdfLista[i].remover = !pdfLista[i].remover; renderPdfRevisar(); };
   window.confirmarGerarPDF = function() {
     const itens = pdfLista.filter(it => !it.remover);
     if (itens.length === 0) { alert('A lista está vazia. Adicione ao menos um produto.'); return; }
     const obs = document.getElementById('pdfObs').value.trim();
-
     if (!window.jspdf || !window.jspdf.jsPDF) { alert('Não foi possível carregar o gerador de PDF. Verifique sua internet e tente de novo.'); return; }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     const dt = new Date();
     const dataTxt = String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0') + '/' + dt.getFullYear();
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
     doc.text('Ludmilla Nail Design', 105, 22, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
     doc.text('Produtos vendidos', 105, 31, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setTextColor(120);
+    doc.setFontSize(10); doc.setTextColor(120);
     doc.text('Data: ' + dataTxt, 105, 39, { align: 'center' });
-    doc.setTextColor(0);
-
-    doc.setDrawColor(200);
-    doc.line(20, 45, 190, 45);
-
+    doc.setTextColor(0); doc.setDrawColor(200); doc.line(20, 45, 190, 45);
     let y = 55;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.text('Produto', 20, y);
-    doc.text('Qtd', 180, y, { align: 'right' });
-    y += 4;
-    doc.setDrawColor(220);
-    doc.line(20, y, 190, y);
-    y += 7;
-
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.text('Produto', 20, y); doc.text('Qtd', 180, y, { align: 'right' });
+    y += 4; doc.setDrawColor(220); doc.line(20, y, 190, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
     let totalItens = 0;
     itens.forEach(it => {
       totalItens += it.qtd;
@@ -550,32 +627,21 @@
       doc.text(String(it.qtd), 180, y, { align: 'right' });
       y += (linhas.length * 6) + 3;
     });
-
     y += 4;
     if (y > 275) { doc.addPage(); y = 20; }
-    doc.setDrawColor(200);
-    doc.line(20, y, 190, y);
-    y += 8;
+    doc.setDrawColor(200); doc.line(20, y, 190, y); y += 8;
     doc.setFont('helvetica', 'bold');
     doc.text('Total de itens', 20, y);
     doc.text(String(totalItens), 180, y, { align: 'right' });
-
-    // Observação
     if (obs) {
       y += 14;
       if (y > 265) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.text('Observação:', 20, y);
-      y += 7;
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(11);
-      doc.setTextColor(60);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+      doc.text('Observação:', 20, y); y += 7;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(11); doc.setTextColor(60);
       const obsLinhas = doc.splitTextToSize(obs, 170);
-      doc.text(obsLinhas, 20, y);
-      doc.setTextColor(0);
+      doc.text(obsLinhas, 20, y); doc.setTextColor(0);
     }
-
     doc.save('Produtos vendidos - ' + dataTxt.replace(/\//g,'-') + '.pdf');
     fecharModais();
   };
@@ -598,23 +664,32 @@
   function renderEstoque() {
     const cats = [...new Set(Object.values(produtos).map(p => p.categoria).filter(Boolean))].sort();
     document.getElementById('listaCategorias').innerHTML = cats.map(c => '<option value="' + esc(c) + '">').join('');
-    const ids = Object.keys(produtos).sort((a,b) => {
+    let ids = Object.keys(produtos).sort((a,b) => {
       const ca = (produtos[a].categoria||'zzz'), cb = (produtos[b].categoria||'zzz');
       if (ca !== cb) return ca.localeCompare(cb);
       return (produtos[a].nome||'').localeCompare(produtos[b].nome||'');
     });
-    document.getElementById('contProdutos').textContent = ids.length ? ids.length + ' produtos' : '';
+    // aplica a busca
+    const termo = semAcento(termoBusca).trim();
+    if (termo) {
+      ids = ids.filter(id => semAcento(produtos[id].nome).includes(termo) || semAcento(produtos[id].categoria).includes(termo));
+    }
+    const totalProdutos = Object.keys(produtos).length;
+    document.getElementById('contProdutos').textContent = termo ? (ids.length + ' de ' + totalProdutos) : (totalProdutos ? totalProdutos + ' produtos' : '');
     const dica = document.getElementById('dicaVenda');
-    if (dica) dica.style.display = ids.length ? 'block' : 'none';
+    if (dica) dica.style.display = totalProdutos ? 'block' : 'none';
     const lista = document.getElementById('listaEstoque');
-    if (ids.length === 0) { lista.innerHTML = '<div class="vazio"><span class="ic">📦</span>Nenhum produto ainda.<br>Toque em "+ Novo produto" para começar.</div>'; return; }
+    if (totalProdutos === 0) { lista.innerHTML = '<div class="vazio"><span class="ic">📦</span>Nenhum produto ainda.<br>Toque em "+ Novo produto" para começar.</div>'; return; }
+    if (ids.length === 0) { lista.innerHTML = '<div class="vazio"><span class="ic">🔍</span>Nenhum produto encontrado para "' + esc(termoBusca) + '".</div>'; return; }
     lista.innerHTML = ids.map(id => {
       const p = produtos[id], qtd = p.qtd||0, min = p.min||0;
       const lucro = calcLucro(p.custo||0, p.venda||0);
       let classe = 'qtd-badge';
       if (qtd === 0) classe += ' zero'; else if (qtd <= min) classe += ' baixo';
+      const foto = p.foto ? '<img class="foto" src="' + p.foto + '" alt="">' : '<div class="foto-vazia">📷</div>';
       return '<div class="card prod">' +
         '<div class="area-venda" onclick="venderProduto(\'' + id + '\')">' +
+        foto +
         '<div class="' + classe + '"><span class="n">' + qtd + '</span><span class="u">un</span></div>' +
         '<div class="info"><div class="nome">' + esc(p.nome) + '</div>' +
         (p.categoria ? '<div class="precos" style="color:var(--rose);font-weight:600;">' + esc(p.categoria) + '</div>' : '') +
@@ -636,7 +711,8 @@
       const tag = v.pago === false ? '<span class="tag fiado">Fiado</span>' : '<span class="tag pago">Pago</span>';
       return '<div class="card venda-item"><div class="info"><div class="nome">' + (v.qtd>1?v.qtd+'x ':'') + esc(v.produtoNome) + '</div>' +
         '<div class="meta">' + (v.cliente?esc(v.cliente)+' · ':'') + (v.data?v.data.split('-').reverse().slice(0,2).join('/'):'') + ' ' + tag + '</div></div>' +
-        '<div class="valor">' + fmt(v.valor||0) + '</div></div>';
+        '<div class="acoes-v"><div class="valor">' + fmt(v.valor||0) + '</div>' +
+        '<button class="btn-cancelar-venda" onclick="cancelarVenda(\'' + id + '\')">Cancelar</button></div></div>';
     }).join('');
   }
 
@@ -685,7 +761,6 @@
       '<div class="pa-linha destaque"><span class="lab">Pagar à fornecedora</span><span class="val">' + fmt(totDevolve) + '</span></div>' +
       '<button class="btn-fechar-acerto" onclick="fecharAcerto()"' + (idsVendas.length === 0 ? ' disabled' : '') + '>Fechar acerto e começar novo período</button>' +
       (idsVendas.length === 0 ? '<div style="text-align:center;font-size:12px;color:var(--cinza);margin-top:10px;">Nenhuma venda para fechar ainda.</div>' : '');
-
     const idsAcertos = Object.keys(acertos).sort((a,b) => (acertos[b].criado||0)-(acertos[a].criado||0));
     const lista = document.getElementById('listaAcertos');
     if (idsAcertos.length === 0) { lista.innerHTML = '<div class="vazio"><span class="ic">📖</span>Nenhum acerto fechado ainda.</div>'; return; }
